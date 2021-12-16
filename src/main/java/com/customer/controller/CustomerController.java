@@ -1,7 +1,7 @@
 package com.customer.controller;
 
 import com.customer.repository.CustomerRepository;
-import model.Customer;
+import com.customer.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
