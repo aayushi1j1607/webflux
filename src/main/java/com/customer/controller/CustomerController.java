@@ -1,8 +1,11 @@
 package com.customer.controller;
 
-import com.customer.repository.CustomerRepository;
 import com.customer.model.Customer;
+
+import com.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +15,30 @@ import reactor.core.publisher.Mono;
 public class CustomerController {
 
     @Autowired
-    CustomerRepository repo;
+    CustomerService customerService;
 
     @GetMapping
-    public Flux<Customer> getAllCustomer(){
-        return repo.findAll();
+    public Flux<ResponseEntity<Customer>> getAllCustomer(){
+        return customerService.getAllEmployee().map(m -> new ResponseEntity<>(m , HttpStatus.OK));
     }
 
     @GetMapping("/{id}")
-    public Mono<Customer> getCustomerById(@PathVariable Integer custId){
-        return repo.findById(custId);
+    public Mono<ResponseEntity<Customer>> getCustomerById(@PathVariable Integer custId){
+        return customerService.getEmployeeById(custId).map(m-> new ResponseEntity<>(m, HttpStatus.OK));
     }
 
     @PostMapping
-    public Mono<Customer> createCustomer(@RequestBody Customer customer){
-return repo.save(customer);
+    public Mono<ResponseEntity<Customer>> createCustomer(@RequestBody Customer customer){
+    return customerService.createEmployee(customer).map(m-> new ResponseEntity<>(m , HttpStatus.OK));
     }
 
     @PutMapping("/{id}")
-    public Mono<Customer> updateCustomerById(@RequestBody Customer customer, @PathVariable Integer id){
-        return repo.findById(id)
-                .map((c)->{
-                    c.setName(customer.getName());
-                    return c;
-        }).flatMap(s->repo.save(customer));
+    public Mono<ResponseEntity<Customer>> updateCustomerById(@RequestBody Customer customer, @PathVariable Integer id){
+        return customerService.updateEmployeeById(customer,id).map(m -> new ResponseEntity<>(m , HttpStatus.OK));
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteEmployee(@PathVariable Integer id){
-    return repo.deleteById(id);
+        return customerService.deleteEmployee(id);
     }
 }
